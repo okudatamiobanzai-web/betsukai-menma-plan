@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>食の交流プロジェクト（仮）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#E03030;
+    --red-dark:#B71C1C;
+    --ink:#1A1A1A;
+    --gray:#F2F2F2;
+    --gray-line:#E2E2E2;
+    --muted:#6B6B6B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{
+    font-family:"Noto Sans JP",system-ui,sans-serif;
+    color:var(--ink);
+    background:#cfcfcf;
+    line-height:1.6;
+    padding:28px 16px;
+  }
+  .sheet{
+    width:100%;
+    max-width:960px;
+    margin:0 auto;
+    background:#fff;
+    box-shadow:0 8px 40px rgba(0,0,0,.18);
+    overflow:hidden;
+  }
+
+  /* ===== 赤帯ヘッダー ===== */
+  .band{
+    background:var(--red);
+    color:#fff;
+    padding:22px 40px 20px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:24px;
+  }
+  .band .titlewrap{max-width:74%;}
+  .kicker{
+    font-size:13px;font-weight:700;letter-spacing:.18em;
+    opacity:.92;margin-bottom:8px;
+  }
+  .band h1{
+    font-size:38px;font-weight:900;line-height:1.18;letter-spacing:.01em;
+  }
+  .band .sub{
+    margin-top:10px;font-size:15px;font-weight:500;opacity:.95;
+  }
+  .logo{
+    text-align:right;flex-shrink:0;line-height:1.05;padding-top:4px;
+  }
+  .logo .ja{font-size:24px;font-weight:900;letter-spacing:.04em;}
+  .logo .en{font-size:12px;font-weight:700;letter-spacing:.34em;opacity:.92;}
+
+  .body{padding:34px 40px 38px;}
+
+  /* ===== 課題 ===== */
+  .section-label{
+    display:inline-block;font-size:13px;font-weight:900;color:var(--red);
+    letter-spacing:.08em;border-left:5px solid var(--red);padding-left:10px;
+    margin-bottom:16px;
+  }
+  .problems{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:10px;
+  }
+  .pcard{
+    background:var(--gray);border-radius:12px;padding:16px 16px 15px;
+  }
+  .pcard .ploc{font-size:14px;font-weight:900;color:var(--red-dark);margin-bottom:6px;}
+  .pcard p{font-size:13.5px;font-weight:500;color:#333;line-height:1.55;}
+  .pcard .has{color:#1a7a3a;font-weight:700;}
+  .pcard .lack{color:var(--red);font-weight:700;}
+  .solve{
+    text-align:center;font-size:16px;font-weight:900;margin:18px 0 4px;
+  }
+  .solve b{color:var(--red);}
+
+  /* ===== エンジン（フライホイール） ===== */
+  .engine{
+    margin-top:30px;background:#fff;border:2px solid var(--gray-line);
+    border-radius:16px;padding:26px 24px 22px;position:relative;
+  }
+  .engine-h{
+    text-align:center;margin-bottom:22px;
+  }
+  .engine-h .t{font-size:20px;font-weight:900;}
+  .engine-h .t span{color:var(--red);}
+  .engine-h .d{font-size:13px;color:var(--muted);font-weight:500;margin-top:4px;}
+
+  .steps{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:0;align-items:stretch;
+  }
+  .step{
+    position:relative;text-align:center;padding:0 8px;
+  }
+  .step:not(:last-child)::after{
+    content:"";position:absolute;top:26px;right:-9px;
+    width:18px;height:18px;border-top:3px solid var(--red);border-right:3px solid var(--red);
+    transform:rotate(45deg);z-index:2;
+  }
+  .badge{
+    width:54px;height:54px;border-radius:50%;background:var(--red);color:#fff;
+    font-size:24px;font-weight:900;display:flex;align-items:center;justify-content:center;
+    margin:0 auto 12px;box-shadow:0 4px 0 var(--red-dark);
+  }
+  .step h3{font-size:15px;font-weight:900;margin-bottom:6px;line-height:1.3;}
+  .step p{font-size:12px;font-weight:500;color:#444;line-height:1.5;}
+
+  .loopback{
+    margin-top:20px;display:flex;align-items:center;justify-content:center;gap:10px;
+    background:#FFF3F3;border:1.5px dashed var(--red);border-radius:999px;
+    padding:10px 20px;font-size:13.5px;font-weight:700;color:var(--red-dark);
+    max-width:560px;margin-left:auto;margin-right:auto;
+  }
+  .loopback .arr{font-size:18px;}
+
+  /* ===== 二拠点 ===== */
+  .hubs{
+    margin-top:30px;display:flex;align-items:stretch;gap:0;
+  }
+  .hub{
+    flex:1;background:var(--gray);border-radius:14px;padding:18px 20px;
+  }
+  .hub .name{font-size:18px;font-weight:900;}
+  .hub .name small{font-size:12px;color:var(--muted);font-weight:700;display:block;margin-top:2px;letter-spacing:.04em;}
+  .hub .role{font-size:13px;font-weight:500;color:#333;margin-top:8px;}
+  .hub .tag{display:inline-block;font-size:11px;font-weight:700;background:#fff;border:1px solid var(--gray-line);border-radius:999px;padding:3px 10px;margin:8px 6px 0 0;}
+  .swap{
+    flex:0 0 64px;display:flex;align-items:center;justify-content:center;
+    font-size:30px;font-weight:900;color:var(--red);
+  }
+
+  /* ===== なぜ回る ===== */
+  .why{margin-top:30px;}
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .wcard{border:1.5px solid var(--gray-line);border-radius:12px;padding:15px 16px;}
+  .wcard .wt{font-size:14px;font-weight:900;color:var(--ink);margin-bottom:5px;}
+  .wcard .wt em{font-style:normal;color:var(--red);}
+  .wcard p{font-size:12.5px;font-weight:500;color:#444;line-height:1.55;}
+
+  /* ===== 最初の一歩 ===== */
+  .firststep{
+    margin-top:30px;background:var(--ink);color:#fff;border-radius:14px;
+    padding:22px 26px;
+  }
+  .firststep .fh{font-size:15px;font-weight:900;color:#fff;margin-bottom:12px;}
+  .firststep .fh span{color:#ff7b7b;}
+  .fsteps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .fs{display:flex;gap:10px;align-items:flex-start;}
+  .fs .n{flex:0 0 24px;height:24px;border-radius:50%;background:var(--red);font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .fs p{font-size:12.5px;font-weight:500;line-height:1.5;opacity:.95;}
+
+  .foot{
+    margin-top:26px;padding-top:14px;border-top:1px solid var(--gray-line);
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;color:var(--muted);font-weight:500;
+  }
+  .foot .fl b{color:var(--red);font-weight:900;}
+
+  @media (max-width:780px){
+    .band{flex-direction:column;padding:20px 22px;}
+    .band .titlewrap{max-width:100%;}
+    .band h1{font-size:28px;}
+    .logo{text-align:left;}
+    .body{padding:24px 22px 28px;}
+    .problems,.why-grid,.fsteps{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr;gap:0;}
+    .step{display:flex;text-align:left;gap:14px;padding:10px 0;align-items:flex-start;}
+    .step .badge{margin:0;flex-shrink:0;width:44px;height:44px;font-size:20px;}
+    .step:not(:last-child)::after{top:auto;bottom:-4px;left:21px;right:auto;transform:rotate(135deg);}
+    .step .txt{flex:1;}
+    .hubs{flex-direction:column;}
+    .swap{flex-basis:auto;transform:rotate(90deg);padding:6px 0;}
+  }
+  @media print{
+    body{background:#fff;padding:0;}
+    .sheet{box-shadow:none;max-width:none;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- 赤帯 -->
+  <div class="band">
+    <div class="titlewrap">
+      <div class="kicker">枚方 ⇄ 別海　姉妹都市プロジェクト</div>
+      <h1>食の交流プロジェクト<span style="font-size:.6em;font-weight:700;">（仮）</span></h1>
+      <div class="sub">二つの拠点で、ヒット商品を生み出し続ける「食のエンジン」をつくる。</div>
+    </div>
+    <div class="logo">
+      <div class="ja">しるべ</div>
+      <div class="en">SHIRUBE</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- 課題 -->
+    <div class="section-label">なぜやるか</div>
+    <div class="problems">
+      <div class="pcard">
+        <div class="ploc">道東・別海</div>
+        <p>原料は<span class="has">無限</span>。でも<span class="lack">商品にする人・小ロットで作れる先が少ない</span>。</p>
+      </div>
+      <div class="pcard">
+        <div class="ploc">大阪・枚方</div>
+        <p>売り先と食文化は<span class="has">ある</span>。でも<span class="lack">遠くの良い原料に出会えない</span>。</p>
+      </div>
+      <div class="pcard">
+        <div class="ploc">姉妹都市40年</div>
+        <p>仲は<span class="has">いい</span>。でも<span class="lack">経済的な結びつきはまだゼロ</span>。</p>
+      </div>
+    </div>
+    <div class="solve">この3つを、<b>ひとつの仕組み</b>で同時に解く。</div>
+
+    <!-- エンジン -->
+    <div class="engine">
+      <div class="engine-h">
+        <div class="t">ヒットを<span>生み出し続ける</span>仕組み</div>
+        <div class="d">単発のイベントではなく、回すほどヒットが積み上がる「型」をつくる</div>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="txt">
+            <div class="badge">1</div>
+            <h3>コラボ実験</h3>
+            <p>両拠点の<b>原料 × 調理技術</b>を掛け合わせ、実験商品をつくる</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="txt">
+            <div class="badge">2</div>
+            <h3>試食会イベント</h3>
+            <p>各拠点で試食会を<b>お祭り化</b>。生産者も登場して語る</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="txt">
+            <div class="badge">3</div>
+            <h3>評判の可視化</h3>
+            <p>来場者の反応を<b>スコア化</b>。何が刺さったか一目でわかる</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="txt">
+            <div class="badge">4</div>
+            <h3>クラファン昇格</h3>
+            <p>高評価の商品<b>だけ</b>前売りクラファンへ。集まればGO</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="txt">
+            <div class="badge">5</div>
+            <h3>ヒット商品</h3>
+            <p>跳ねたら定番化＆<b>双方のふるさと納税返礼品</b>へ</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="loopback">
+        <span class="arr">↻</span>好評の手応えが、次の実験を呼ぶ ── 回すほどヒットが積み上がる
+      </div>
+    </div>
+
+    <!-- 二拠点 -->
+    <div style="margin-top:30px;" class="section-label">二つの拠点で、双方向に回す</div>
+    <div class="hubs">
+      <div class="hub">
+        <div class="name">別海<small>HOKKAIDO / 道東</small></div>
+        <div class="role">道東の原料と生産者。協力隊70名の拠点。新店舗が試食会の会場になる。</div>
+        <div>
+          <span class="tag">海産・酪農・ジビエ</span>
+          <span class="tag">ふるさと納税200億の町</span>
+        </div>
+      </div>
+      <div class="swap">⇄</div>
+      <div class="hub">
+        <div class="name">枚方<small>OSAKA / 大阪</small></div>
+        <div class="role">売り先（飲食店）と食文化。コワーキング「ビィーゴ」が試食会の会場になる。</div>
+        <div>
+          <span class="tag">飲食店ネットワーク</span>
+          <span class="tag">ビィーゴ・観光協会</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- なぜ回る -->
+    <div class="why">
+      <div class="section-label">なぜ、この2つなら回るのか</div>
+      <div class="why-grid">
+        <div class="wcard">
+          <div class="wt"><em>01</em>　40年の下地</div>
+          <p>姉妹都市協定（1987年〜）。婚活イベント42回・97組成婚という、すでに人が行き交う土台がある。</p>
+        </div>
+        <div class="wcard">
+          <div class="wt"><em>02</em>　すでにある手札</div>
+          <p>枚方メンマ・産業祭での相互往来・ふるさと納税の強い別海。点が揃っていて、線にするだけ。</p>
+        </div>
+        <div class="wcard">
+          <div class="wt"><em>03</em>　両側に「場」がある</div>
+          <p>別海＝新店舗、枚方＝ビィーゴ。人が集まり試食会を開ける場が、最初から両拠点に存在する。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 最初の一歩 -->
+    <div class="firststep">
+      <div class="fh">最初の<span>一歩</span></div>
+      <div class="fsteps">
+        <div class="fs"><div class="n">1</div><p>第一弾の食材を1つ決めて、コラボ実験商品をつくる</p></div>
+        <div class="fs"><div class="n">2</div><p>両拠点のどちらかで、試食会を1回やってみる</p></div>
+        <div class="fs"><div class="n">3</div><p>反応を可視化し、手応えあれば1本目のクラファンへ</p></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div class="fl"><b>しるべ</b>　食の交流プロジェクト（仮）｜ 枚方 ⇄ 別海</div>
+      <div class="fr">DRAFT 2026.06</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

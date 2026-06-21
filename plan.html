@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>売上計画シミュレーター｜別海まちなか拠点 前売り</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1f5e46; --green-dark:#15402f; --amber:#d9842b; --amber-light:#f3b35f;
+    --cream:#faf6ef; --ink:#2b2722; --muted:#7a7268; --line:#e6ddd0; --white:#fff; --red:#c0392b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--ink);line-height:1.7;padding-bottom:60px}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  header{background:linear-gradient(160deg,var(--green-dark),var(--green));color:#fff;padding:28px 0;margin-bottom:24px}
+  header h1{font-size:20px;font-weight:900}
+  header p{font-size:13px;opacity:.85}
+
+  .panel{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px}
+  h2{font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  h2::before{content:"";width:5px;height:18px;background:var(--amber);border-radius:3px}
+
+  /* 結果サマリー */
+  .summary{position:sticky;top:0;z-index:10;background:var(--white);border:2px solid var(--green);border-radius:14px;padding:16px 20px;margin-bottom:18px;box-shadow:0 6px 20px rgba(43,39,34,.10)}
+  .sumrow{display:flex;gap:10px;flex-wrap:wrap}
+  .sumcell{flex:1;min-width:120px;text-align:center}
+  .sumcell .v{font-size:clamp(18px,3.5vw,26px);font-weight:900;font-variant-numeric:tabular-nums}
+  .sumcell .l{font-size:11px;color:var(--muted)}
+  .sumcell.profit .v{color:var(--green)}
+  .bar{height:14px;background:#f0e9dd;border-radius:999px;overflow:hidden;margin-top:12px;position:relative}
+  .bar .fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--green),var(--amber));border-radius:999px;transition:width .5s}
+  .bar .goalline{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--red)}
+  .barlabel{font-size:11px;color:var(--muted);margin-top:5px;display:flex;justify-content:space-between}
+  .judge{font-size:13px;font-weight:700;margin-top:8px}
+  .judge.ok{color:var(--green)} .judge.ng{color:var(--red)}
+
+  /* シナリオ */
+  .scenarios{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+  .scenarios button{flex:1;min-width:110px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--white);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+  .scenarios button.active{background:var(--green);color:#fff;border-color:var(--green)}
+  .scenarios button small{display:block;font-weight:400;font-size:10px;color:var(--muted)}
+  .scenarios button.active small{color:rgba(255,255,255,.75)}
+
+  /* リターン行 */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:11px;color:var(--muted);font-weight:500;padding:4px 8px;border-bottom:1px solid var(--line)}
+  td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rtitle{font-weight:700}
+  .rtitle small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--white);font-size:16px;cursor:pointer;color:var(--green);font-weight:700}
+  .stepper input{width:52px;text-align:center;padding:6px 2px;border:1px solid var(--line);border-radius:8px;font-size:15px;font-weight:700;font-family:inherit}
+  .costinput{width:70px;text-align:right;padding:5px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;background:#fffdf9}
+  .gp{font-weight:700;color:var(--green)}
+  tfoot td{font-weight:900;border-bottom:none;border-top:2px solid var(--ink);font-size:14px}
+
+  /* チャネルメモ */
+  .channel{font-size:13px}
+  .channel li{margin:0 0 10px 1.2em}
+  .channel b{color:var(--green)}
+  .note{font-size:12px;color:var(--muted);margin-top:10px}
+  .insight{background:#fdf3e3;border-radius:10px;padding:12px 16px;font-size:13px;margin-top:12px}
+  .insight b{color:var(--amber)}
+  @media print {.scenarios,.stepper button{display:none}}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <h1>売上計画シミュレーター</h1>
+  <p>別海まちなか拠点 開店前売り｜目標：粗利 ¥500,000（銀行振込のみ＝決済手数料ゼロ）</p>
+</div></header>
+
+<div class="wrap">
+
+  <div class="summary">
+    <div class="sumrow">
+      <div class="sumcell"><div class="v" id="sumSales">¥0</div><div class="l">売上総額（ゲージ表示額）</div></div>
+      <div class="sumcell"><div class="v" id="sumCost">¥0</div><div class="l">リターン原価</div></div>
+      <div class="sumcell profit"><div class="v" id="sumProfit">¥0</div><div class="l">粗利</div></div>
+      <div class="sumcell"><div class="v" id="sumCount">0件</div><div class="l">申込件数</div></div>
+    </div>
+    <div class="bar"><div class="fill" id="profitFill"></div><div class="goalline" style="left:83.3%"></div></div>
+    <div class="barlabel"><span>粗利進捗（メモリ最大60万）</span><span style="color:var(--red)">┃目標50万</span></div>
+    <div class="judge" id="judge"></div>
+  </div>
+
+  <div class="panel">
+    <h2>シナリオプリセット</h2>
+    <div class="scenarios">
+      <button data-s="kataku">堅実<small>声かけ反応 控えめ</small></button>
+      <button data-s="hyojun" class="active">標準<small>これが基本線</small></button>
+      <button data-s="stretch">ストレッチ<small>枚方筋＋事業者全部当たる</small></button>
+      <button data-s="zero">ゼロから<small>手入力で組み立て</small></button>
+    </div>
+    <p class="note">口数は±ボタンか直接入力で調整。原価も書き換え可能（粗利は自動再計算）。</p>
+  </div>
+
+  <div class="panel">
+    <h2>リターン別 計画</h2>
+    <table id="planTable">
+      <thead><tr><th>リターン</th><th>口数</th><th style="text-align:right">原価/口</th><th style="text-align:right">粗利/口</th><th style="text-align:right">売上</th><th style="text-align:right">粗利</th></tr></thead>
+      <tbody></tbody>
+      <tfoot><tr><td>合計</td><td id="tCount"></td><td></td><td></td><td class="num" id="tSales"></td><td class="num gp" id="tProfit"></td></tr></tfoot>
+    </table>
+    <div class="insight" id="insight"></div>
+  </div>
+
+  <div class="panel channel">
+    <h2>誰に売るか（チャネル設計）</h2>
+    <ul>
+      <li><b>コアメンバー先行権（30,000円）</b>：粗利エンジン。1口でドリンク券12口分。コアメンバー制はもともと10人構想なので、先行権6〜8口は「确定している人に先に買ってもらう」だけ。コウダイ・milk常連・協力隊同期から。</li>
+      <li><b>スポンサー券（10,000円）</b>：事業者ネットワークに直接営業。八木さん3事業体／リプロ／ocobore亀田さん／ファームノート筋／岩谷学園関係／馬込・野呂農家筋／MIA。15口=15事業者で、店内ボード掲載は先方の宣伝にもなる。</li>
+      <li><b>メンマセット（選べる2種5,000円／5種コンプリート8,000円）</b>：道東は久保が直接お届け（送料ゼロ＝粗利上乗せ）。枚方筋（銀次郎さん・ビィーゴ平岩さん・同級生・菊と緑の会つながり）には発送で「姉妹都市応援」の物語ごと届ける。迷ったら「どうせなら全種類」と8,000円へ誘導するのが単価アップの動線。</li>
+      <li><b>ドリンクチケット（3,000円）</b>:いちばん軽い応援の受け皿。別海・中標津の飲み仲間、milk会員、SNSフォロワー。迷ってる人の受け皿に。</li>
+    </ul>
+    <p class="note">※ 標準シナリオの申込91件は、知人200名ネットワークで換算すると約45%の成約率。声かけは「全員に一斉告知」ではなく高額帯から個別に。</p>
+  </div>
+
+</div>
+
+<script>
+const GOAL_PROFIT = 500000;
+const BAR_MAX = 600000;
+const yen = n => "¥" + Math.round(n).toLocaleString("ja-JP");
+
+const REWARDS = [
+  { id:"core",    title:"コアメンバー先行権",        sub:"会員1ヶ月＋掲載＋メンマ5種コンプリート", price:30000, cost:3100 },
+  { id:"sponsor", title:"スポンサー券",              sub:"ボード掲載1年＋ドリンク5枚",       price:10000, cost:1000 },
+  { id:"menma5",  title:"メンマ5種コンプリート＋ドリンク2枚", sub:"卸2,135＋ドリンク300＋平均送料650", price:8000, cost:3100 },
+  { id:"menma",   title:"メンマ選べる2種＋ドリンク2枚", sub:"卸約875＋ドリンク300＋平均送料500",  price:5000,  cost:1700 },
+  { id:"drink5",  title:"ドリンクチケット5枚",        sub:"1杯原価150円×5",                  price:3000,  cost:750 },
+];
+
+const SCENARIOS = {
+  kataku:  { core:3, sponsor:10, menma5:3,  menma:20, drink5:30 },
+  hyojun:  { core:7, sponsor:15, menma5:8,  menma:25, drink5:40 },
+  stretch: { core:8, sponsor:20, menma5:12, menma:35, drink5:50 },
+  zero:    { core:0, sponsor:0,  menma5:0,  menma:0,  drink5:0 },
+};
+
+const state = Object.assign({}, SCENARIOS.hyojun);
+const costs = {};
+REWARDS.forEach(r => costs[r.id] = r.cost);
+
+const tbody = document.querySelector("#planTable tbody");
+REWARDS.forEach(r => {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><div class="rtitle">${r.title}<small>${r.sub}・${yen(r.price)}</small></div></td>
+    <td><div class="stepper">
+      <button data-id="${r.id}" data-d="-1">−</button>
+      <input type="number" min="0" max="999" id="n-${r.id}" value="${state[r.id]}">
+      <button data-id="${r.id}" data-d="1">＋</button>
+    </div></td>
+    <td class="num"><input class="costinput" type="number" id="c-${r.id}" value="${r.cost}" min="0" step="50"></td>
+    <td class="num gp" id="g-${r.id}"></td>
+    <td class="num" id="s-${r.id}"></td>
+    <td class="num gp" id="p-${r.id}"></td>`;
+  tbody.appendChild(tr);
+});
+
+tbody.addEventListener("click", e => {
+  const b = e.target.closest("button[data-id]");
+  if (!b) return;
+  const id = b.dataset.id;
+  state[id] = Math.max(0, state[id] + Number(b.dataset.d));
+  document.getElementById("n-" + id).value = state[id];
+  setActiveScenario(null);
+  render();
+});
+tbody.addEventListener("input", e => {
+  const m = e.target.id.match(/^([nc])-(.+)$/);
+  if (!m) return;
+  const v = Math.max(0, Number(e.target.value) || 0);
+  if (m[1] === "n") state[m[2]] = Math.floor(v); else costs[m[2]] = v;
+  setActiveScenario(null);
+  render();
+});
+
+document.querySelector(".scenarios").addEventListener("click", e => {
+  const b = e.target.closest("button[data-s]");
+  if (!b) return;
+  Object.assign(state, SCENARIOS[b.dataset.s]);
+  REWARDS.forEach(r => document.getElementById("n-" + r.id).value = state[r.id]);
+  setActiveScenario(b);
+  render();
+});
+function setActiveScenario(btn) {
+  document.querySelectorAll(".scenarios button").forEach(x => x.classList.toggle("active", x === btn));
+}
+
+function render() {
+  let sales = 0, cost = 0, count = 0;
+  REWARDS.forEach(r => {
+    const n = state[r.id], c = costs[r.id];
+    const s = r.price * n, p = (r.price - c) * n;
+    sales += s; cost += c * n; count += n;
+    document.getElementById("g-" + r.id).textContent = yen(r.price - c);
+    document.getElementById("s-" + r.id).textContent = yen(s);
+    document.getElementById("p-" + r.id).textContent = yen(p);
+  });
+  const profit = sales - cost;
+  document.getElementById("sumSales").textContent = yen(sales);
+  document.getElementById("sumCost").textContent = yen(cost);
+  document.getElementById("sumProfit").textContent = yen(profit);
+  document.getElementById("sumCount").textContent = count + "件";
+  document.getElementById("tCount").textContent = count + "件";
+  document.getElementById("tSales").textContent = yen(sales);
+  document.getElementById("tProfit").textContent = yen(profit);
+  document.getElementById("profitFill").style.width = Math.min(100, profit / BAR_MAX * 100) + "%";
+
+  const judge = document.getElementById("judge");
+  if (profit >= GOAL_PROFIT) {
+    judge.className = "judge ok";
+    judge.textContent = "✅ 目標達成（+" + yen(profit - GOAL_PROFIT) + "）— ゲージ目標額はこの売上総額 " + yen(sales) + " に設定";
+  } else {
+    const gap = GOAL_PROFIT - profit;
+    const coreNeed = Math.ceil(gap / (30000 - costs.core));
+    const spNeed = Math.ceil(gap / (10000 - costs.sponsor));
+    judge.className = "judge ng";
+    judge.textContent = "⚠ 目標まで粗利あと" + yen(gap) + "（コア+" + coreNeed + "口 または スポンサー+" + spNeed + "口で到達）";
+  }
+
+  // インサイト
+  const unitCore = 30000 - costs.core, unitDrink = 3000 - costs.drink5;
+  document.getElementById("insight").innerHTML =
+    "<b>レバレッジ:</b> コア1口の粗利" + yen(unitCore) + " ＝ ドリンク券" + (unitCore / unitDrink).toFixed(1) + "口分。" +
+    "営業時間は高額帯から順に使う。逆にドリンク券は「告知を見て勝手に買ってもらう」設計でOK。";
+}
+render();
+</script>
+</body>
+</html>

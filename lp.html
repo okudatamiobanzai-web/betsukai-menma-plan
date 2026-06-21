@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>【仮】別海まちなか拠点 開店前売りプロジェクト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1f5e46; --green-dark:#15402f; --amber:#d9842b; --amber-light:#f3b35f;
+    --cream:#faf6ef; --ink:#2b2722; --muted:#7a7268; --line:#e6ddd0; --white:#fff;
+    --paid:#1f5e46; --pledged:#d9842b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--ink);line-height:1.8}
+  .serif{font-family:'Shippori Mincho',serif}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+
+  /* hero */
+  .hero{background:linear-gradient(160deg,rgba(18,52,39,.90),rgba(31,94,70,.84)),url('img/hero.jpg') center/cover;color:#fff;padding:64px 0 56px;text-align:center}
+  .hero h1,.hero p{text-shadow:0 1px 8px rgba(0,0,0,.25)}
+  .hero .tag{display:inline-block;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:4px 16px;font-size:12px;letter-spacing:.15em;margin-bottom:18px}
+  .hero h1{font-size:clamp(24px,5vw,38px);font-weight:800;line-height:1.5;letter-spacing:.04em}
+  .hero p.sub{margin-top:14px;font-size:14px;opacity:.85}
+  .placeholder{background:rgba(255,255,255,.12);border-radius:4px;padding:0 6px}
+
+  /* gauge card */
+  .gauge-card{background:var(--white);border-radius:16px;box-shadow:0 8px 30px rgba(43,39,34,.08);padding:28px 26px;margin:-30px auto 0;position:relative;z-index:2}
+  .gauge-amount{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .gauge-amount .now{font-size:clamp(32px,6vw,44px);font-weight:900;color:var(--pledged);font-variant-numeric:tabular-nums}
+  .gauge-amount .goal{font-size:14px;color:var(--muted)}
+  .bar{height:18px;background:#f0e9dd;border-radius:999px;overflow:hidden;margin:14px 0 10px;position:relative}
+  .bar .fill-paid{position:absolute;left:0;top:0;bottom:0;background:var(--paid);border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+  .bar .fill-pledged{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(45deg,var(--amber),var(--amber) 8px,var(--amber-light) 8px,var(--amber-light) 16px);border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1);opacity:.85}
+  .legend{display:flex;gap:18px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+  .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .legend .l-paid::before{background:var(--paid)}
+  .legend .l-pledged::before{background:repeating-linear-gradient(45deg,var(--amber),var(--amber) 4px,var(--amber-light) 4px,var(--amber-light) 8px)}
+  .stats{display:flex;gap:0;margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+  .stat{flex:1;text-align:center}
+  .stat+.stat{border-left:1px solid var(--line)}
+  .stat .num{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}
+  .stat .lbl{font-size:11px;color:var(--muted)}
+
+  /* sections */
+  section{padding:48px 0 8px}
+  h2{font-size:22px;font-weight:800;display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  h2::before{content:"";width:6px;height:24px;background:var(--amber);border-radius:3px}
+  .story p{margin-bottom:14px;font-size:15px}
+  .story h3{font-size:16px;font-weight:800;margin:30px 0 10px;color:var(--green-dark)}
+  .story h3 small{display:block;font-size:11px;color:var(--amber);letter-spacing:.2em;font-weight:700}
+  .pull{font-family:'Shippori Mincho',serif;font-size:clamp(19px,4vw,24px);font-weight:800;color:var(--green);text-align:center;padding:26px 10px;line-height:1.6}
+  .statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
+  .stat2{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .stat2 .v{font-size:20px;font-weight:900;color:var(--green);font-variant-numeric:tabular-nums}
+  .stat2 .v small{font-size:12px}
+  .stat2 .l{font-size:11px;color:var(--muted)}
+  .en-list{list-style:none;margin:14px 0}
+  .en-list li{position:relative;padding:10px 14px 10px 38px;background:var(--white);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:14px}
+  .en-list li::before{content:"縁";position:absolute;left:10px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;background:var(--amber);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .photo-slot{border:2px dashed var(--line);border-radius:12px;aspect-ratio:16/7;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;margin:14px 0;background:rgba(255,255,255,.5)}
+  .strip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:18px 0 4px}
+  .strip img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block}
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 4px}
+  .gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block}
+  .gallery img.wide{grid-column:1/-1;aspect-ratio:21/9}
+  .cap{font-size:11px;color:var(--muted);text-align:center;margin:6px 0 14px}
+  .reward .rimg{width:84px;height:84px;border-radius:10px;object-fit:cover;flex:none}
+  @media (max-width:520px){ .reward .rimg{width:64px;height:64px} }
+
+  /* rewards */
+  .reward{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px;display:flex;gap:16px;align-items:flex-start}
+  .reward .price{font-size:20px;font-weight:900;color:var(--green);white-space:nowrap;min-width:92px;font-variant-numeric:tabular-nums}
+  .reward .price small{font-size:12px;font-weight:500;color:var(--muted);display:block}
+  .reward .body{flex:1;min-width:0}
+  .reward h3{font-size:15px;font-weight:700;margin-bottom:4px}
+  .reward p{font-size:13px;color:var(--muted)}
+  .reward .qty{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .qty button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--white);font-size:18px;cursor:pointer;color:var(--green);font-weight:700}
+  .qty button:active{background:var(--cream)}
+  .qty .n{min-width:24px;text-align:center;font-weight:700;font-size:16px}
+  @media (max-width:520px){
+    .reward{flex-wrap:wrap;align-items:center}
+    .reward .price{min-width:auto}
+    .reward .qty{margin-left:auto;order:2}
+    .reward .body{order:3;flex:1 1 100%}
+  }
+
+  /* form */
+  .form-card{background:var(--white);border-radius:16px;border:1px solid var(--line);padding:26px 22px;margin-bottom:30px}
+  .total-row{display:flex;justify-content:space-between;align-items:baseline;background:var(--cream);border-radius:10px;padding:12px 16px;margin-bottom:20px}
+  .total-row .t{font-size:14px;font-weight:700}
+  .total-row .v{font-size:26px;font-weight:900;color:var(--green);font-variant-numeric:tabular-nums}
+  label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}
+  label .req{color:#c0392b;font-size:11px;margin-left:6px}
+  label .opt{color:var(--muted);font-size:11px;margin-left:6px;font-weight:400}
+  input[type=text],input[type=email],textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:15px;font-family:inherit;background:#fffdf9}
+  input:focus,textarea:focus{outline:2px solid var(--amber-light);border-color:var(--amber)}
+  .check{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:10px}
+  .check input{width:18px;height:18px;accent-color:var(--green)}
+  .submit{width:100%;margin-top:22px;padding:16px;border:none;border-radius:12px;background:var(--amber);color:#fff;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.05em;transition:transform .1s}
+  .submit:active{transform:scale(.98)}
+  .submit:disabled{background:#ccc;cursor:not-allowed}
+  .note{font-size:12px;color:var(--muted);margin-top:10px}
+
+  /* done panel */
+  .done{display:none;background:var(--white);border:2px solid var(--green);border-radius:16px;padding:28px 24px;margin-bottom:30px}
+  .done h3{color:var(--green);font-size:18px;margin-bottom:12px}
+  .done .order-id{font-size:26px;font-weight:900;color:var(--amber);letter-spacing:.08em}
+  .bank-box{background:var(--cream);border-radius:12px;padding:18px;margin:16px 0;font-size:14px}
+  .bank-box dt{font-size:11px;color:var(--muted);margin-top:8px}
+  .bank-box dd{font-weight:700;font-size:16px}
+  .done .warn{font-size:13px;background:#fdf3e3;border-radius:8px;padding:10px 14px;margin-top:10px}
+
+  /* flow */
+  .flow{counter-reset:step}
+  .flow li{list-style:none;position:relative;padding:0 0 18px 46px;font-size:14px}
+  .flow li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .flow li b{display:block}
+  .flow li span{color:var(--muted);font-size:13px}
+
+  /* supporters */
+  .names{display:flex;flex-wrap:wrap;gap:8px}
+  .names span{background:var(--white);border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:13px}
+
+  /* faq + legal */
+  details{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:10px;font-size:14px}
+  summary{font-weight:700;cursor:pointer}
+  details p{margin-top:8px;color:var(--muted);font-size:13px}
+  .legal{font-size:12px;color:var(--muted);background:var(--white);border-radius:12px;padding:20px;margin:30px 0}
+  .legal h3{font-size:13px;color:var(--ink);margin-bottom:8px}
+  .legal td{padding:3px 14px 3px 0;vertical-align:top;white-space:nowrap}
+  footer{text-align:center;padding:30px 0 50px;font-size:12px;color:var(--muted)}
+  .demo-badge{position:fixed;top:10px;right:10px;background:#c0392b;color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;z-index:99;display:none}
+</style>
+</head>
+<body>
+
+<div class="demo-badge" id="demoBadge">デモモード（バックエンド未接続）</div>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="tag">開店前売り｜応援購入</div>
+    <h1 class="serif"><span class="placeholder">【仮】別海まちなか拠点</span><br>はじまりの前売りプロジェクト</h1>
+    <p class="sub">牛が人の7倍いる町に、飲み会するところがない。——昼はコワーキング、夜は日替わりスナックの「止まり木」を、別海の飲み屋街ど真ん中につくります。</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="gauge-card">
+    <div class="gauge-amount">
+      <span class="now" id="pledgedAmount">¥0</span>
+      <span class="goal">/ 目標 <b id="goalAmount">¥750,000</b>（申込ベース）</span>
+    </div>
+    <div class="bar">
+      <div class="fill-pledged" id="fillPledged" style="width:0%"></div>
+      <div class="fill-paid" id="fillPaid" style="width:0%"></div>
+    </div>
+    <div class="legend">
+      <span class="l-paid">入金確認済み <b id="paidAmount">¥0</b></span>
+      <span class="l-pledged">申込済み（入金待ち含む）</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="supporterCount">0</div><div class="lbl">応援人数</div></div>
+      <div class="stat"><div class="num" id="achieveRate">0%</div><div class="lbl">達成率</div></div>
+      <div class="stat"><div class="num" id="daysLeft">—</div><div class="lbl">残り日数</div></div>
+    </div>
+  </div>
+
+  <section class="story">
+    <h2>このプロジェクトについて</h2>
+
+    <h3><small>CHAPTER 01</small>牛は10万頭いるのに、飲み会するところがない</h3>
+    <div class="statgrid">
+      <div class="stat2"><div class="v">1,320<small>km²</small></div><div class="l">東京23区の約2倍の広さ</div></div>
+      <div class="stat2"><div class="v">104,726<small>頭</small></div><div class="l">乳用牛。人口14,380人の約7倍</div></div>
+      <div class="stat2"><div class="v">日本一</div><div class="l">生乳生産量</div></div>
+      <div class="stat2"><div class="v">70<small>名超</small></div><div class="l">町内の地域おこし協力隊</div></div>
+    </div>
+    <p>北海道・別海町。数字はこんなにぶっ飛んでいるのに、夜にダラダラ飲みながらだべれる場所がほとんどありません。お店は少なく、当日予約はほぼ満席。協力隊だけで70名以上いるこの町で、人と熱量は集まっているのに、<b>つなぐ場所だけがない</b>。</p>
+    <p>だから、飲み屋街のど真ん中で眠っていた空き店舗を借りて、昼はコワーキング、夜は日替わりスナックの「止まり木」をつくることにしました。</p>
+
+    <h3><small>CHAPTER 02</small>枚方で生まれて、道東に住み着いた</h3>
+    <p>店主の久保竜太郎は大阪府<b>枚方市</b>出身。大学進学で北海道に渡り、ヒッチハイク日本一周、牧場勤め、中標津のコワーキングスペースmilkの立ち上げを経て、2026年4月、別海町地域おこし協力隊に着任しました。</p>
+    <div class="photo-slot">📷 写真スロット：久保＋別海の風景（あとで差し替え）</div>
+
+    <h3><small>CHAPTER 03</small>ここからが、出来すぎな話</h3>
+    <ul class="en-list">
+      <li>別海町と枚方市は<b>1987年からの友好都市</b>。1984年から続く婚活交流は42回・累計658名、<b>97組が成婚</b>。別海には「枚方奥様の会」まである</li>
+      <li>弟・久保銀次郎は、枚方市穂谷の<b>放置竹林を整備</b>して「枚方メンマ」を作っている</li>
+      <li>中学の同級生は、枚方の老舗コワーキングスペース「ビィーゴ」を運営している</li>
+      <li>枚方メンマはすでに別海の産業祭に<b>枚方ブースとして上陸済み</b></li>
+    </ul>
+    <div class="pull">え、やるしかなくね？</div>
+    <p>スナックといえば乾き物。その乾き物の代わりに、弟が枚方の竹林から作るスパイスメンマを別海で出す。ゆくゆくは別海産チーズと合わせた「クリームチーズメンマ」を自社製造して、ふるさと納税で全国へ——<b>兄弟とふたつの町をつなぐ計画</b>です。投資は小さい。でも、条件が揃いすぎている。</p>
+    <div class="strip">
+      <img src="img/v1.jpg" alt="枚方メンマ" loading="lazy">
+      <img src="img/v2.jpg" alt="枚方メンマ" loading="lazy">
+      <img src="img/v3.jpg" alt="枚方メンマ" loading="lazy">
+      <img src="img/v4.jpg" alt="枚方メンマ" loading="lazy">
+      <img src="img/v5.jpg" alt="枚方メンマ" loading="lazy">
+    </div>
+    <p class="cap">枚方メンマ 全5種（スパイス塩・オイル漬・和風・中華・燻製クリチ和え）。ぜんぶ、別海で出します。</p>
+    <div class="gallery">
+      <img class="wide" src="img/set5.jpg" alt="枚方メンマ5種セット" loading="lazy">
+      <img src="img/plate1.jpg" alt="枚方メンマとスパイス" loading="lazy">
+      <img src="img/plate2.jpg" alt="枚方メンマとスパイス" loading="lazy">
+      <img src="img/plate3.jpg" alt="枚方メンマとスパイス" loading="lazy">
+    </div>
+    <p class="cap">スパイスから手作りされる枚方メンマ。「にほんの里100選」に選ばれた穂谷の竹林育ち。</p>
+
+    <h3><small>CHAPTER 04</small>なぜ「前売り」なのか</h3>
+    <p>これはクラウドファンディングサイトではなく、<b>開店前のメニューとサービスを直接予約購入していただく前売りページ</b>です。プラットフォームや決済の手数料が一切かからないぶん、いただいた金額は<b>1円残らず開店準備の燃料</b>になります。応援の気持ちは、開店後のドリンクとメンマで必ずお返しします。</p>
+  </section>
+
+  <section>
+    <h2>前売りメニュー（リターン）</h2>
+    <div id="rewardList"></div>
+  </section>
+
+  <section>
+    <h2>お申し込み</h2>
+
+    <div class="done" id="donePanel">
+      <h3>お申し込みありがとうございます！</h3>
+      <p>あなたの申込番号は</p>
+      <div class="order-id" id="doneOrderId">B-000</div>
+      <p style="margin-top:8px;font-size:14px">下記口座へ <b id="doneAmount"></b> のお振り込みをお願いします（<b>7日以内</b>）。同じ内容を確認メールでもお送りしました。</p>
+      <dl class="bank-box">
+        <dt>振込先</dt><dd id="doneBank">〇〇銀行 〇〇支店 普通 0000000</dd>
+        <dt>口座名義</dt><dd id="doneBankName">クボ リュウタロウ</dd>
+      </dl>
+      <div class="warn">💡 可能であれば、振込名義の頭に申込番号をつけてください（例：<b>B12 クボリュウタロウ</b>）。照合がスムーズになります。</div>
+    </div>
+
+    <div class="form-card" id="formCard">
+      <div class="total-row"><span class="t">お申し込み合計</span><span class="v" id="totalDisplay">¥0</span></div>
+      <form id="orderForm">
+        <label>お名前<span class="req">必須</span></label>
+        <input type="text" name="name" required placeholder="久保 竜太郎">
+        <label>メールアドレス<span class="req">必須</span></label>
+        <input type="email" name="email" required placeholder="example@gmail.com">
+        <label>お振り込み予定の名義（カタカナ）<span class="req">必須</span></label>
+        <input type="text" name="kana" required placeholder="クボ リュウタロウ" pattern="[ァ-ヶー\s　]+" title="カタカナで入力してください">
+        <label>応援ボードへの掲載名<span class="opt">任意・空欄ならお名前を使用</span></label>
+        <input type="text" name="displayName" placeholder="ニックネーム可">
+        <div class="check"><input type="checkbox" name="showName" id="showName" checked><label for="showName" style="margin:0;font-weight:400">このページの応援ボードに名前を掲載してOK</label></div>
+        <label>メンマの種類のご希望<span class="opt">「選べる2種」の方のみ</span></label>
+        <input type="text" name="menmaChoice" placeholder="例：和風と中華 ／ おまかせ">
+        <label>応援メッセージ<span class="opt">任意</span></label>
+        <textarea name="message" rows="3" placeholder="ひとことどうぞ！"></textarea>
+        <button type="submit" class="submit" id="submitBtn">この内容で申し込む</button>
+        <p class="note">送信後に振込口座をご案内します。お支払いは銀行振込のみ・決済手数料はかかりません（振込手数料はご負担をお願いします）。</p>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <h2>お申し込みからの流れ</h2>
+    <ol class="flow">
+      <li><b>フォームから申し込み</b><span>この時点でゲージに反映されます（申込ベース）</span></li>
+      <li><b>振込口座をメールでご案内</b><span>完了画面にも表示されます</span></li>
+      <li><b>7日以内にお振り込み</b><span>確認できしだい「入金確認済み」に切り替わります</span></li>
+      <li><b>開店後、リターンをお渡し</b><span>メンマセットは開店前でもお渡しできます（道東エリアは久保が直接お届け／それ以外は発送）</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>応援ボード</h2>
+    <div class="names" id="supporterNames"><span style="color:var(--muted)">まだ誰もいません。一番乗りをお待ちしています！</span></div>
+  </section>
+
+  <section>
+    <h2>よくある質問</h2>
+    <details><summary>目標に届かなかったらどうなりますか？</summary><p>目標未達でも開店準備は実行し、お申し込みいただいたリターンは必ずお渡しします（実行確約型）。</p></details>
+    <details><summary>ドリンクチケットはいつから使えますか？</summary><p>開店日からご利用いただけます。有効期限は発行（開店日）から5ヶ月です。開店予定：<span class="placeholder">【仮】2026年◯月</span>。</p></details>
+    <details><summary>振り込んだのにゲージが「入金確認済み」になりません</summary><p>口座確認は1営業日ごとに行っています。2〜3日経っても反映されない場合はメールでご連絡ください。</p></details>
+    <details><summary>キャンセルはできますか？</summary><p>入金前は可能です（7日を過ぎると自動キャンセル扱い）。入金後のキャンセル・返金は原則お受けできません。</p></details>
+  </section>
+
+  <div class="legal">
+    <h3>特定商取引法に基づく表記</h3>
+    <table>
+      <tr><td>販売事業者</td><td><span class="placeholder">【要記入】久保 竜太郎（屋号）</span></td></tr>
+      <tr><td>所在地</td><td><span class="placeholder">【要記入】北海道野付郡別海町…</span></td></tr>
+      <tr><td>連絡先</td><td><span class="placeholder">【要記入】メールアドレス・電話番号</span></td></tr>
+      <tr><td>販売価格</td><td>各リターンの表示価格（税込）</td></tr>
+      <tr><td>支払方法</td><td>銀行振込（前払い）</td></tr>
+      <tr><td>引渡時期</td><td>各リターンに記載（店舗利用系は開店後）</td></tr>
+      <tr><td>返品・キャンセル</td><td>入金前のみ可。商品に瑕疵がある場合は交換対応</td></tr>
+    </table>
+  </div>
+</div>
+
+<footer>© 2026 <span class="placeholder">【仮】別海まちなか拠点</span> – しるべ</footer>
+
+<script>
+/* =========================================================================
+ * 設定 ／ CONFIG  ※リターン・商品ライン・目標額・締切は v0.1（差替前提）
+ * -------------------------------------------------------------------------
+ *   ◆ 編集の入り口はこのブロックだけで完結する設計。
+ *     - REWARDS 配列を書き換える → リターン表示と申込ロジックに即時反映
+ *     - GOAL / DEADLINE / BANK を書き換える → ゲージと完了画面に反映
+ *     - 各リターンの構造は { id, price, title, desc, img? } 固定。
+ *       新リターン追加は配列に1行足すだけ、削除は1行消すだけ。
+ *   ◆ id を変えると申込スプレッドシートの集計列がズレるので
+ *     既存リターンの id は維持し、新リターンは新規 id を使うこと。
+ *   ◆ 商品ラインの一次資料：
+ *     - 事業計画書 §05  /Users/Ryutaro/betsukai_menma_business_plan.html
+ *     - 価格表        reference_hirakatamenma_pricing.md
+ *   ◆ 大枠 v0.1 として現時点で書いてある内容は今後の検討で都度差し替える。
+ * ========================================================================= */
+const CONFIG = {
+  GAS_URL: "",                       // ← GASデプロイ後のURLを貼る。空のままだとデモモード
+  GOAL: 750000,                      // 目標金額（総額表示） ※ v0.1 仮置き
+  DEADLINE: "2026-07-31",            // 募集締切 ※ v0.1 仮置き
+  BANK: { line1: "〇〇銀行 〇〇支店 普通 0000000", name: "クボ リュウタロウ" },  // 完了画面表示用（メールはGAS側設定）
+  REWARDS: [
+    // --- v0.1 仮リターン。金額・構成・配送条件は今後差し替える ---
+    { id:"drink5",  price:3000,  title:"ドリンクチケット5枚",        desc:"開店後に使える1杯券×5。有効期限は開店から5ヶ月。" },
+    { id:"menma",   price:5000,  title:"枚方メンマ 選べる2種＋ドリンク2枚", desc:"スパイス塩・オイル漬・和風・中華・燻製クリチ和えの5種から好きな2つ（各100g）＋1杯券×2。道東エリアは久保が直接お届け、それ以外は発送します。", img:"img/assort.jpg" },
+    { id:"menma5",  price:8000,  title:"枚方メンマ5種コンプリート＋ドリンク2枚", desc:"全5種（各100g）を一気に味わうセット＋1杯券×2。道東エリアは久保が直接お届け、それ以外は発送します。", img:"img/set5.jpg" },
+    { id:"sponsor", price:10000, title:"スポンサー券",               desc:"店内スポンサーボードにお名前掲載（1年）＋ドリンクチケット5枚。" },
+    { id:"core",    price:30000, title:"コアメンバー先行権",          desc:"コワーキング会員1ヶ月分＋スポンサー掲載＋枚方メンマ5種コンプリート。月次運営会議への参加権つき。", img:"img/packs.jpg" },
+  ],
+};
+/* ================================================ */
+
+const yen = n => "¥" + n.toLocaleString("ja-JP");
+const qty = {};   // rewardId -> 個数
+
+// リターン描画
+const rewardList = document.getElementById("rewardList");
+CONFIG.REWARDS.forEach(r => {
+  qty[r.id] = 0;
+  const div = document.createElement("div");
+  div.className = "reward";
+  div.innerHTML = `
+    ${r.img ? `<img class="rimg" src="${r.img}" alt="${r.title}" loading="lazy">` : ""}
+    <div class="price">${yen(r.price)}<small>税込</small></div>
+    <div class="body"><h3>${r.title}</h3><p>${r.desc}</p></div>
+    <div class="qty">
+      <button type="button" data-id="${r.id}" data-d="-1">−</button>
+      <span class="n" id="qty-${r.id}">0</span>
+      <button type="button" data-id="${r.id}" data-d="1">＋</button>
+    </div>`;
+  rewardList.appendChild(div);
+});
+rewardList.addEventListener("click", e => {
+  const b = e.target.closest("button[data-id]");
+  if (!b) return;
+  const id = b.dataset.id;
+  qty[id] = Math.max(0, Math.min(20, qty[id] + Number(b.dataset.d)));
+  document.getElementById("qty-" + id).textContent = qty[id];
+  updateTotal();
+});
+function currentTotal() {
+  return CONFIG.REWARDS.reduce((s, r) => s + r.price * qty[r.id], 0);
+}
+function updateTotal() {
+  document.getElementById("totalDisplay").textContent = yen(currentTotal());
+}
+
+// ゲージ
+function renderStats(s) {
+  const pledged = s.pledged, paid = s.paid, goal = s.goal || CONFIG.GOAL;
+  document.getElementById("pledgedAmount").textContent = yen(pledged);
+  document.getElementById("paidAmount").textContent = yen(paid);
+  document.getElementById("goalAmount").textContent = yen(goal);
+  document.getElementById("supporterCount").textContent = s.supporters;
+  document.getElementById("achieveRate").textContent = Math.floor(pledged / goal * 100) + "%";
+  requestAnimationFrame(() => {
+    document.getElementById("fillPledged").style.width = Math.min(100, pledged / goal * 100) + "%";
+    document.getElementById("fillPaid").style.width = Math.min(100, paid / goal * 100) + "%";
+  });
+  if (s.names && s.names.length) {
+    document.getElementById("supporterNames").innerHTML =
+      s.names.map(n => `<span>${n} さん</span>`).join("");
+  }
+  const left = Math.max(0, Math.ceil((new Date(CONFIG.DEADLINE + "T23:59:59+09:00") - new Date()) / 86400000));
+  document.getElementById("daysLeft").textContent = left;
+}
+
+const DEMO_STATS = { pledged: 318000, paid: 214000, supporters: 47, goal: CONFIG.GOAL,
+  names: ["コウダイ", "ひなほ", "ギンジロウ", "milkのなかま", "枚方の同級生"] };
+
+async function loadStats() {
+  if (!CONFIG.GAS_URL) {
+    document.getElementById("demoBadge").style.display = "block";
+    renderStats(DEMO_STATS);
+    return;
+  }
+  try {
+    const res = await fetch(CONFIG.GAS_URL + "?mode=stats");
+    renderStats(await res.json());
+  } catch (e) { console.error("stats load failed", e); }
+}
+loadStats();
+setInterval(loadStats, 60000);
+
+// 申込送信
+document.getElementById("orderForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const total = currentTotal();
+  if (total === 0) { alert("リターンを1つ以上選んでください"); return; }
+  const f = new FormData(e.target);
+  const payload = {
+    name: f.get("name"), email: f.get("email"), kana: f.get("kana"),
+    displayName: f.get("displayName") || f.get("name"),
+    showName: !!f.get("showName"), message: f.get("message"),
+    menmaChoice: f.get("menmaChoice"),
+    items: Object.fromEntries(Object.entries(qty).filter(([, n]) => n > 0)),
+  };
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true; btn.textContent = "送信中…";
+  try {
+    let result;
+    if (!CONFIG.GAS_URL) {
+      await new Promise(r => setTimeout(r, 600));
+      result = { ok: true, orderId: "B-DEMO", total };
+    } else {
+      // GASはpreflight非対応のためtext/plainでPOSTする
+      const res = await fetch(CONFIG.GAS_URL, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) });
+      result = await res.json();
+    }
+    if (!result.ok) throw new Error(result.error || "failed");
+    document.getElementById("doneOrderId").textContent = result.orderId;
+    document.getElementById("doneAmount").textContent = yen(result.total);
+    document.getElementById("doneBank").textContent = CONFIG.BANK.line1;
+    document.getElementById("doneBankName").textContent = CONFIG.BANK.name;
+    document.getElementById("formCard").style.display = "none";
+    document.getElementById("donePanel").style.display = "block";
+    document.getElementById("donePanel").scrollIntoView({ behavior: "smooth" });
+    loadStats();
+  } catch (err) {
+    alert("送信に失敗しました。時間をおいて再度お試しください。");
+    btn.disabled = false; btn.textContent = "この内容で申し込む";
+  }
+});
+</script>
+</body>
+</html>
