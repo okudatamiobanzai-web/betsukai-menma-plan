@@ -56,6 +56,7 @@
   .stepper input{width:52px;text-align:center;padding:6px 2px;border:1px solid var(--line);border-radius:8px;font-size:15px;font-weight:700;font-family:inherit}
   .costinput{width:70px;text-align:right;padding:5px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;background:#fffdf9}
   .gp{font-weight:700;color:var(--green)}
+  .cap{font-size:10px;color:var(--red);font-weight:700}
   tfoot td{font-weight:900;border-bottom:none;border-top:2px solid var(--ink);font-size:14px}
 
   /* チャネルメモ */
@@ -71,7 +72,7 @@
 <body>
 
 <header><div class="wrap">
-  <h1>売上計画シミュレーター</h1>
+  <h1>売上計画シミュレーター <span style="font-size:12px;font-weight:400;opacity:.7">v0.2 / 新リターン版</span></h1>
   <p>別海まちなか拠点 開店前売り｜目標：粗利 ¥500,000（銀行振込のみ＝決済手数料ゼロ）</p>
 </div></header>
 
@@ -92,12 +93,12 @@
   <div class="panel">
     <h2>シナリオプリセット</h2>
     <div class="scenarios">
-      <button data-s="kataku">堅実<small>声かけ反応 控えめ</small></button>
+      <button data-s="kataku">堅実<small>体験権ほぼ売れず</small></button>
       <button data-s="hyojun" class="active">標準<small>これが基本線</small></button>
-      <button data-s="stretch">ストレッチ<small>枚方筋＋事業者全部当たる</small></button>
+      <button data-s="stretch">ストレッチ<small>永久券3枠 完売</small></button>
       <button data-s="zero">ゼロから<small>手入力で組み立て</small></button>
     </div>
-    <p class="note">口数は±ボタンか直接入力で調整。原価も書き換え可能（粗利は自動再計算）。</p>
+    <p class="note">口数は±ボタンか直接入力で調整。原価も書き換え可能（粗利は自動再計算）。永久券は限定3枠が上限。</p>
   </div>
 
   <div class="panel">
@@ -113,12 +114,13 @@
   <div class="panel channel">
     <h2>誰に売るか（チャネル設計）</h2>
     <ul>
-      <li><b>コアメンバー先行権（30,000円）</b>：粗利エンジン。1口でドリンク券12口分。コアメンバー制はもともと10人構想なので、先行権6〜8口は「确定している人に先に買ってもらう」だけ。コウダイ・milk常連・協力隊同期から。</li>
-      <li><b>スポンサー券（10,000円）</b>：事業者ネットワークに直接営業。八木さん3事業体／リプロ／ocobore亀田さん／ファームノート筋／岩谷学園関係／馬込・野呂農家筋／MIA。15口=15事業者で、店内ボード掲載は先方の宣伝にもなる。</li>
-      <li><b>メンマセット（選べる2種5,000円／5種コンプリート8,000円）</b>：道東は久保が直接お届け（送料ゼロ＝粗利上乗せ）。枚方筋（銀次郎さん・ビィーゴ平岩さん・同級生・菊と緑の会つながり）には発送で「姉妹都市応援」の物語ごと届ける。迷ったら「どうせなら全種類」と8,000円へ誘導するのが単価アップの動線。</li>
-      <li><b>ドリンクチケット（3,000円）</b>:いちばん軽い応援の受け皿。別海・中標津の飲み仲間、milk会員、SNSフォロワー。迷ってる人の受け皿に。</li>
+      <li><b>永久ドリンク・メンマ無料券（100,000円・限定3枠）</b>：粗利の山。1枠で粗利約8万＝ドリンク券36口分。コアファン（コウダイ／milk立ち上げ仲間／協力隊同期／久保の親友筋）に「どうせ一生通うでしょ？」と先に当てる。<b>この3枠が売れるかどうかで計画全体が決まる</b>。長期的にドリンク・メンマの原価が乗り続ける点だけ頭の片隅に（=原価欄に将来の提供分を引当済み）。</li>
+      <li><b>久保を1日コキ使える権／1日ママできる権（各10,000円）</b>：体験型・原価ほぼゼロで粗利がまるまる立つ。久保のファン、面白がる事業者、イベント好きへ。SNS映えするので告知の起爆剤にもなる。</li>
+      <li><b>貸切イベント開催権（15,000円）</b>：誕生日会・推し会・同窓会の需要。団体客を持つ人、中標津・別海の30-40代へ。1日closeする機会損失だけ意識。</li>
+      <li><b>メンマ5種セット（5,000円）</b>：道東は久保が直接お届けで送料ゼロ＝粗利まるごと。道東外は送料+1,500を支援者負担（持ち出しなし）。枚方筋（銀次郎さん・ビィーゴ平岩さん・同級生・菊と緑の会）には発送で「姉妹都市応援」の物語ごと。</li>
+      <li><b>ドリンクチケット（3,000円）</b>：いちばん軽い応援の受け皿。別海・中標津の飲み仲間、milk会員、SNSフォロワー。迷ってる人の受け皿に。</li>
     </ul>
-    <p class="note">※ 標準シナリオの申込91件は、知人200名ネットワークで換算すると約45%の成約率。声かけは「全員に一斉告知」ではなく高額帯から個別に。</p>
+    <p class="note">※ 高額帯（永久券・体験権）は「全員に一斉告知」ではなく、确度の高い人へ個別に。軽い帯（ドリンク・メンマ）はSNS告知で勝手に積み上がる設計。</p>
   </div>
 
 </div>
@@ -128,33 +130,39 @@ const GOAL_PROFIT = 500000;
 const BAR_MAX = 600000;
 const yen = n => "¥" + Math.round(n).toLocaleString("ja-JP");
 
+/* 原価は「いま現金で出ていく・引き当てるべき額」。永久券は将来の提供原価を概算引当。*/
 const REWARDS = [
-  { id:"core",    title:"コアメンバー先行権",        sub:"会員1ヶ月＋掲載＋メンマ5種コンプリート", price:30000, cost:3100 },
-  { id:"sponsor", title:"スポンサー券",              sub:"ボード掲載1年＋ドリンク5枚",       price:10000, cost:1000 },
-  { id:"menma5",  title:"メンマ5種コンプリート＋ドリンク2枚", sub:"卸2,135＋ドリンク300＋平均送料650", price:8000, cost:3100 },
-  { id:"menma",   title:"メンマ選べる2種＋ドリンク2枚", sub:"卸約875＋ドリンク300＋平均送料500",  price:5000,  cost:1700 },
-  { id:"drink5",  title:"ドリンクチケット5枚",        sub:"1杯原価150円×5",                  price:3000,  cost:750 },
+  { id:"lifetime", title:"永久ドリンク・メンマ無料券", sub:"限定3枠・将来の提供原価を引当", price:100000, cost:20000, max:3 },
+  { id:"charter",  title:"貸切イベント開催権",        sub:"1日貸切・光熱/消耗品",          price:15000,  cost:2000 },
+  { id:"kobo1day", title:"久保を1日コキ使える権",      sub:"現金原価ほぼゼロ",               price:10000,  cost:0 },
+  { id:"mama1day", title:"1日ママできる権",            sub:"提供分の消耗品のみ",            price:10000,  cost:500 },
+  { id:"menma5set",title:"枚方メンマ5種セット",        sub:"卸約2,135＋道東配達（送料は支援者負担）", price:5000, cost:2200 },
+  { id:"drink5",   title:"ドリンクチケット5枚",        sub:"1杯原価150円×5",                price:3000,   cost:750 },
 ];
 
 const SCENARIOS = {
-  kataku:  { core:3, sponsor:10, menma5:3,  menma:20, drink5:30 },
-  hyojun:  { core:7, sponsor:15, menma5:8,  menma:25, drink5:40 },
-  stretch: { core:8, sponsor:20, menma5:12, menma:35, drink5:50 },
-  zero:    { core:0, sponsor:0,  menma5:0,  menma:0,  drink5:0 },
+  // 体験権・永久券がほぼ売れない最低ライン
+  kataku:  { lifetime:0, charter:1, kobo1day:1, mama1day:1, menma5set:15, drink5:20 },
+  // 永久券1枠＋体験権そこそこ＝現実的な基本線
+  hyojun:  { lifetime:1, charter:2, kobo1day:2, mama1day:2, menma5set:30, drink5:30 },
+  // 永久券3枠完売＋体験権フル＝上振れ
+  stretch: { lifetime:3, charter:3, kobo1day:4, mama1day:3, menma5set:45, drink5:45 },
+  zero:    { lifetime:0, charter:0, kobo1day:0, mama1day:0, menma5set:0,  drink5:0 },
 };
 
 const state = Object.assign({}, SCENARIOS.hyojun);
 const costs = {};
 REWARDS.forEach(r => costs[r.id] = r.cost);
+const capOf = id => { const r = REWARDS.find(x => x.id === id); return r && r.max ? r.max : 999; };
 
 const tbody = document.querySelector("#planTable tbody");
 REWARDS.forEach(r => {
   const tr = document.createElement("tr");
   tr.innerHTML = `
-    <td><div class="rtitle">${r.title}<small>${r.sub}・${yen(r.price)}</small></div></td>
+    <td><div class="rtitle">${r.title}${r.max?` <span class="cap">限定${r.max}枠</span>`:""}<small>${r.sub}・${yen(r.price)}</small></div></td>
     <td><div class="stepper">
       <button data-id="${r.id}" data-d="-1">−</button>
-      <input type="number" min="0" max="999" id="n-${r.id}" value="${state[r.id]}">
+      <input type="number" min="0" max="${r.max || 999}" id="n-${r.id}" value="${state[r.id]}">
       <button data-id="${r.id}" data-d="1">＋</button>
     </div></td>
     <td class="num"><input class="costinput" type="number" id="c-${r.id}" value="${r.cost}" min="0" step="50"></td>
@@ -168,7 +176,7 @@ tbody.addEventListener("click", e => {
   const b = e.target.closest("button[data-id]");
   if (!b) return;
   const id = b.dataset.id;
-  state[id] = Math.max(0, state[id] + Number(b.dataset.d));
+  state[id] = Math.max(0, Math.min(capOf(id), state[id] + Number(b.dataset.d)));
   document.getElementById("n-" + id).value = state[id];
   setActiveScenario(null);
   render();
@@ -177,7 +185,8 @@ tbody.addEventListener("input", e => {
   const m = e.target.id.match(/^([nc])-(.+)$/);
   if (!m) return;
   const v = Math.max(0, Number(e.target.value) || 0);
-  if (m[1] === "n") state[m[2]] = Math.floor(v); else costs[m[2]] = v;
+  if (m[1] === "n") { state[m[2]] = Math.min(capOf(m[2]), Math.floor(v)); e.target.value = state[m[2]]; }
+  else costs[m[2]] = v;
   setActiveScenario(null);
   render();
 });
@@ -220,17 +229,28 @@ function render() {
     judge.textContent = "✅ 目標達成（+" + yen(profit - GOAL_PROFIT) + "）— ゲージ目標額はこの売上総額 " + yen(sales) + " に設定";
   } else {
     const gap = GOAL_PROFIT - profit;
-    const coreNeed = Math.ceil(gap / (30000 - costs.core));
-    const spNeed = Math.ceil(gap / (10000 - costs.sponsor));
+    const lifeLeft = capOf("lifetime") - state.lifetime;            // 残り永久券枠
+    const lifeUnit = 100000 - costs.lifetime;
+    const menmaUnit = 5000 - costs.menma5set;
     judge.className = "judge ng";
-    judge.textContent = "⚠ 目標まで粗利あと" + yen(gap) + "（コア+" + coreNeed + "口 または スポンサー+" + spNeed + "口で到達）";
+    if (lifeLeft > 0 && lifeLeft * lifeUnit >= gap) {
+      judge.textContent = "⚠ 目標まで粗利あと" + yen(gap) + "（残りの永久券" + Math.ceil(gap / lifeUnit) + "枠で到達／残枠 " + lifeLeft + "）";
+    } else {
+      const afterLife = gap - lifeLeft * lifeUnit;                  // 永久券を全部売っても残る分
+      const menmaNeed = Math.ceil(afterLife / menmaUnit);
+      const head = lifeLeft > 0 ? "永久券 残り" + lifeLeft + "枠 完売＋" : "";
+      judge.textContent = "⚠ 目標まで粗利あと" + yen(gap) + "（" + head + "メンマ5種+" + menmaNeed + "口 などで到達）";
+    }
   }
 
-  // インサイト
-  const unitCore = 30000 - costs.core, unitDrink = 3000 - costs.drink5;
+  // インサイト：永久券のレバレッジを明示
+  const unitLife = 100000 - costs.lifetime, unitDrink = 3000 - costs.drink5;
+  const lifeProfit = (100000 - costs.lifetime) * state.lifetime;
+  const lifeShare = profit > 0 ? Math.round(lifeProfit / profit * 100) : 0;
   document.getElementById("insight").innerHTML =
-    "<b>レバレッジ:</b> コア1口の粗利" + yen(unitCore) + " ＝ ドリンク券" + (unitCore / unitDrink).toFixed(1) + "口分。" +
-    "営業時間は高額帯から順に使う。逆にドリンク券は「告知を見て勝手に買ってもらう」設計でOK。";
+    "<b>レバレッジ:</b> 永久券1枠の粗利" + yen(unitLife) + " ＝ ドリンク券" + (unitLife / unitDrink).toFixed(0) + "口分。" +
+    "いまの粗利のうち<b>永久券が" + lifeShare + "%</b>を占めています。" +
+    "限定3枠（最大粗利" + yen((100000 - costs.lifetime) * 3) + "）が売れるかで全体が決まる構造。高額帯から順に営業時間を使うのが鉄則。";
 }
 render();
 </script>
