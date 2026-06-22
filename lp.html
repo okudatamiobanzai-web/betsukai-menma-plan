@@ -247,8 +247,6 @@
         <label>応援ボードへの掲載名<span class="opt">任意・空欄ならお名前を使用</span></label>
         <input type="text" name="displayName" placeholder="ニックネーム可">
         <div class="check"><input type="checkbox" name="showName" id="showName" checked><label for="showName" style="margin:0;font-weight:400">このページの応援ボードに名前を掲載してOK</label></div>
-        <label>メンマの種類のご希望<span class="opt">「選べる2種」の方のみ</span></label>
-        <input type="text" name="menmaChoice" placeholder="例：和風と中華 ／ おまかせ">
         <label>応援メッセージ<span class="opt">任意</span></label>
         <textarea name="message" rows="3" placeholder="ひとことどうぞ！"></textarea>
         <button type="submit" class="submit" id="submitBtn">この内容で申し込む</button>
@@ -318,12 +316,13 @@ const CONFIG = {
   DEADLINE: "2026-07-31",            // 募集締切 ※ v0.1 仮置き
   BANK: { line1: "〇〇銀行 〇〇支店 普通 0000000", name: "クボ リュウタロウ" },  // 完了画面表示用（メールはGAS側設定）
   REWARDS: [
-    // --- v0.1 仮リターン。金額・構成・配送条件は今後差し替える ---
-    { id:"drink5",  price:3000,  title:"ドリンクチケット5枚",        desc:"開店後に使える1杯券×5。有効期限は開店から5ヶ月。" },
-    { id:"menma",   price:5000,  title:"枚方メンマ 選べる2種＋ドリンク2枚", desc:"スパイス塩・オイル漬・和風・中華・燻製クリチ和えの5種から好きな2つ（各100g）＋1杯券×2。道東エリアは久保が直接お届け、それ以外は発送します。", img:"img/assort.jpg" },
-    { id:"menma5",  price:8000,  title:"枚方メンマ5種コンプリート＋ドリンク2枚", desc:"全5種（各100g）を一気に味わうセット＋1杯券×2。道東エリアは久保が直接お届け、それ以外は発送します。", img:"img/set5.jpg" },
-    { id:"sponsor", price:10000, title:"スポンサー券",               desc:"店内スポンサーボードにお名前掲載（1年）＋ドリンクチケット5枚。" },
-    { id:"core",    price:30000, title:"コアメンバー先行権",          desc:"コワーキング会員1ヶ月分＋スポンサー掲載＋枚方メンマ5種コンプリート。月次運営会議への参加権つき。", img:"img/packs.jpg" },
+    // --- v0.2 仮リターン。金額・構成・配送条件は今後差し替える ---
+    { id:"drink5",   price:3000,   title:"ドリンクチケット5枚",        desc:"開店後に使える1杯券×5。有効期限は開店から5ヶ月。" },
+    { id:"menma5set",price:5000,   title:"枚方メンマ5種セット",        desc:"スパイス塩・オイル漬・和風・中華・燻製クリチ和えの全5種（各100g）。道東エリアは久保が直接お届けで送料無料／道東以外は送料+¥1,500（お申込み後にご案内します）。", img:"img/set5.jpg" },
+    { id:"mama1day", price:10000,  title:"1日ママできる権",            desc:"お店のカウンターに1日立って、ママ（マスター）として営業できる権利。あなたのお店、あなたの一日。" },
+    { id:"kobo1day", price:10000,  title:"久保を1日コキ使える権",      desc:"久保竜太郎を丸1日、好きにコキ使える券。雑用でも相談相手でも、使い道はあなた次第。" },
+    { id:"charter",  price:15000,  title:"貸切イベント開催権",          desc:"お店を1日まるごと貸し切ってイベントを開ける権利。基本いつでもOK（要事前相談）。誕生日会・推し会・同窓会、なんでもどうぞ。" },
+    { id:"lifetime", price:100000, title:"永久ドリンク・メンマ無料券", limit:3, desc:"開店後ずっと、ご来店時のドリンクとメンマが無料になる夢の券。先着3名様だけの限定枠です。" },
   ],
 };
 /* ================================================ */
@@ -340,7 +339,7 @@ CONFIG.REWARDS.forEach(r => {
   div.innerHTML = `
     ${r.img ? `<img class="rimg" src="${r.img}" alt="${r.title}" loading="lazy">` : ""}
     <div class="price">${yen(r.price)}<small>税込</small></div>
-    <div class="body"><h3>${r.title}</h3><p>${r.desc}</p></div>
+    <div class="body"><h3>${r.title}${r.limit?` <span style="display:inline-block;font-size:11px;font-weight:700;color:#c4332b;background:#fbeae8;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle">限定${r.limit}枠</span>`:""}</h3><p>${r.desc}</p></div>
     <div class="qty">
       <button type="button" data-id="${r.id}" data-d="-1">−</button>
       <span class="n" id="qty-${r.id}">0</span>
@@ -352,7 +351,9 @@ rewardList.addEventListener("click", e => {
   const b = e.target.closest("button[data-id]");
   if (!b) return;
   const id = b.dataset.id;
-  qty[id] = Math.max(0, Math.min(20, qty[id] + Number(b.dataset.d)));
+  const rw = CONFIG.REWARDS.find(x => x.id === id);
+  const max = rw && rw.limit ? rw.limit : 20;
+  qty[id] = Math.max(0, Math.min(max, qty[id] + Number(b.dataset.d)));
   document.getElementById("qty-" + id).textContent = qty[id];
   updateTotal();
 });
@@ -410,7 +411,7 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
     name: f.get("name"), email: f.get("email"), kana: f.get("kana"),
     displayName: f.get("displayName") || f.get("name"),
     showName: !!f.get("showName"), message: f.get("message"),
-    menmaChoice: f.get("menmaChoice"),
+    menmaChoice: f.get("menmaChoice") || "",
     items: Object.fromEntries(Object.entries(qty).filter(([, n]) => n > 0)),
   };
   const btn = document.getElementById("submitBtn");
